@@ -1,0 +1,23 @@
+{
+  "skill_name": "skill-reviewer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review the quality of the skill in the skill-creator directory",
+      "expected_output": "Complete Skill review report with P0-P3 issue classification and improvement suggestions",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Quick check for critical issues in the current directory's skill",
+      "expected_output": "Concise review result focusing on P0 and P1 level issues",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Review this skill and automatically fix automatable issues",
+      "expected_output": "Review report + automatically fixed automatable issues",
+      "files": []
+    }
+  ]
+}

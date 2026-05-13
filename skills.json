@@ -1,0 +1,20 @@
+{
+  "skills": [
+    {
+      "name": "skill-reviewer",
+      "path": "./skill-reviewer",
+      "description": "Review Skill quality against 10 best practices. Use when user says 'review this skill', 'check skill quality', 'audit skill design', 'skill code review'. Supports automated checks and auto-fix.",
+      "author": "liwuhou",
+      "version": "1.0.0",
+      "tags": ["skill-development", "code-review", "quality-assurance"]
+    },
+    {
+      "name": "multi-agent",
+      "path": "./multi-agent",
+      "description": "Coordinate multiple agents to execute tasks in parallel. Use when user says 'use multiple agents in parallel', 'split task', 'concurrent execution', 'do multiple things at the same time'. Supports task splitting, isolated execution, and flexible merge strategies.",
+      "author": "liwuhou",
+      "version": "2.0.0",
+      "tags": ["multi-agent", "parallel-execution", "task-coordination"]
+    }
+  ]
+}
