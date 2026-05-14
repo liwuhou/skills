@@ -15,6 +15,14 @@
       "author": "liwuhou",
       "version": "2.0.0",
       "tags": ["multi-agent", "parallel-execution", "task-coordination"]
+    },
+    {
+      "name": "codex-verify",
+      "path": "./codex-verify",
+      "description": "Use OpenAI Codex CLI to verify and review code written by Claude. Invoke when you want a second opinion on code quality, cross-check for bugs, or validate work before committing. Triggers on 'verify', 'validate', 'codex review', 'double-check', 'let codex check this'.",
+      "author": "liwuhou",
+      "version": "1.0.0",
+      "tags": ["verification", "code-review", "codex", "cross-validation"]
     }
   ]
 }
