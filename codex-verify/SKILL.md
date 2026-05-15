@@ -1,7 +1,7 @@
 ---
 name: codex-verify
 description: Use OpenAI Codex CLI (GPT-5.5) to verify and review code written by Claude. Invoke this skill whenever you want a second opinion on code quality, need to cross-check for bugs or security issues, or want an independent model to validate your work. Use it after writing or modifying code, before committing changes, or when the user asks to verify, validate, review, double-check, or cross-validate code. Also triggers on phrases like "let codex check this", "run codex verification", "verify with gpt", "codex review", or "second opinion on this code".
-argument-hint: "[scope: diff|branch|file] [phase: defects|quality|both] [--base <branch>] [--files <paths>] [--custom <prompt>]"
+argument-hint: "[scope: diff|branch|file] [phase: defects|quality|both] [--base <branch>] [--files <paths>] [--lang <language>] [--custom <prompt>]"
 ---
 
 ## What this skill does
@@ -26,12 +26,17 @@ The script `codex-run.sh` accepts the same scope names and internally maps them 
 ## Workflow Checklist
 
 - [ ] **Determine verification scope** ⚠️ BLOCKING — ask the user if scope is unclear
-  - [ ] Parse user arguments for `scope`, `phase`, `base`, `files`, `custom`
+  - [ ] Parse user arguments for `scope`, `phase`, `base`, `files`, `custom`, `lang`
   - [ ] Ask yourself: Has the user named specific files? → **file** scope
   - [ ] Ask yourself: Did the user mention a branch comparison? → **branch** scope
   - [ ] Ask yourself: Are there uncommitted git changes and no explicit scope? → **diff** scope (default)
   - [ ] Ask yourself: Did the user give a custom instruction like "check for memory leaks"? → **file** scope (or whatever scope applies) + `--custom` modifier — never use custom as a standalone scope
   - [ ] If still unclear, ask the user before proceeding ⚠️
+- [ ] **Determine output language** — detect the language the user is writing in and pass it via `--lang`
+  - [ ] If the user explicitly specifies a language → use that value
+  - [ ] If not specified → detect from the user's current conversation language (e.g., writing in Chinese → `--lang zh-CN`, Japanese → `--lang ja`, Korean → `--lang ko`)
+  - [ ] If the conversation is in English → omit `--lang` (Codex defaults to English)
+  - [ ] Common language codes: `zh-CN` (简体中文), `zh-TW` (繁体中文), `ja` (日本語), `ko` (한국어), `fr` (Français), `de` (Deutsch), `es` (Español), `pt` (Português), `ru` (Русский), `en` (English)
 - [ ] **Generate unique output paths** — use `mktemp` to avoid collisions between concurrent runs
   ```bash
   DEFECTS_OUT=$(mktemp) && QUALITY_OUT=$(mktemp)
@@ -68,6 +73,15 @@ scripts/codex-run.sh defects file "$DEFECTS_OUT" src/auth.ts --custom "focus on 
 scripts/codex-run.sh defects diff "$DEFECTS_OUT" --custom "focus on XSS vulnerabilities"
 ```
 
+The `--lang` flag tells Codex to write its response in the specified language:
+```bash
+# Output in Chinese
+scripts/codex-run.sh defects file "$DEFECTS_OUT" src/auth.ts --lang zh-CN
+
+# Output in Japanese
+scripts/codex-run.sh quality diff "$QUALITY_OUT" --lang ja
+```
+
 For Phase 2, use the same scope and same args, just change `defects` to `quality`:
 ```bash
 scripts/codex-run.sh quality file "$QUALITY_OUT" file1.ts file2.ts
@@ -86,7 +100,9 @@ Prompt text is embedded in `scripts/codex-run.sh` (canonical source). `reference
 
 ## Presenting results to the user
 
-Use this template when summarizing findings:
+**Language rule**: Present results in the same language the user is using in the current conversation. If the user is writing in Chinese, present results in Chinese; if Japanese, present in Japanese; etc. Technical identifiers (file paths, function names, variable names) stay in their original form, but all prose — descriptions, suggestions, explanations, headers — must match the user's language.
+
+Use this template when summarizing findings (adapt all prose to the user's language):
 
 ```
 ## Codex Verification Results

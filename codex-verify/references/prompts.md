@@ -39,6 +39,28 @@ You are a code quality reviewer. Evaluate the specified code on these five dimen
 Rate each dimension 1-5 (1=poor, 5=excellent) and provide specific, actionable improvement suggestions for any dimension rated below 4. Be concise — one suggestion per low-rated dimension is enough.
 ```
 
+## Language Modifier (--lang)
+
+The `--lang` flag tells Codex to write its entire response in the specified language. The script appends this instruction at the end of the prompt:
+
+```
+IMPORTANT: Write your entire response in <LANG>. All descriptions, explanations, and suggestions must be in <LANG>. Keep technical identifiers (file paths, function names, variable names) in their original form, but all prose content must be in <LANG>.
+```
+
+This flag works with any scope and any phase. If omitted, Codex defaults to English.
+
+Common language codes:
+- `zh-CN` — 简体中文 (Simplified Chinese)
+- `zh-TW` — 繁体中文 (Traditional Chinese)
+- `ja` — 日本語 (Japanese)
+- `ko` — 한국어 (Korean)
+- `fr` — Français (French)
+- `de` — Deutsch (German)
+- `es` — Español (Spanish)
+- `pt` — Português (Portuguese)
+- `ru` — Русский (Russian)
+- `en` — English
+
 ## Custom Modifier (--custom)
 
 The `--custom` flag is a modifier, not a standalone scope. It works with any scope (diff, branch, or file) to add user-specified criteria. The script prepends this framing before the base prompt:

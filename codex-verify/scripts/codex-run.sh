@@ -10,6 +10,7 @@
 #   scope:   diff | branch | file
 #   output:  path to write Codex output (use mktemp for unique paths)
 #   files:   space-separated file paths (required for file scope, rejected for diff/branch)
+#   --lang <language>: output language for Codex responses (e.g., zh-CN, ja, ko, en). Defaults to English if omitted.
 #   --custom "prompt": optional modifier that adds custom criteria to any scope
 #   --base <branch>: base branch name (required for branch scope)
 #   --dry-run: print the command and prompt without executing
@@ -28,6 +29,8 @@
 #   codex-run.sh defects branch /tmp/out.md --base main
 #   codex-run.sh defects diff /tmp/out.md
 #   codex-run.sh quality file /tmp/out.md src/auth.ts
+#   codex-run.sh defects file /tmp/out.md src/auth.ts --lang zh-CN
+#   codex-run.sh defects diff /tmp/out.md --lang ja
 #   codex-run.sh defects file /tmp/out.md src/auth.ts --custom "check for memory leaks"
 #   codex-run.sh defects diff /tmp/out.md --custom "focus on XSS vulnerabilities"
 #   codex-run.sh defects file /tmp/out.md src/auth.ts --dry-run
@@ -39,6 +42,7 @@ set -uo pipefail
 PHASE=""
 SCOPE=""
 OUTPUT=""
+LANG=""
 CUSTOM_PROMPT=""
 BASE_BRANCH=""
 FILES=()
@@ -66,6 +70,11 @@ parse_args() {
       --base)
         [[ $# -ge 2 ]] || { echo "Error: --base requires a branch name"; exit 1; }
         BASE_BRANCH="$2"
+        shift 2
+        ;;
+      --lang)
+        [[ $# -ge 2 ]] || { echo "Error: --lang requires a language value (e.g., zh-CN, ja, ko, en)"; exit 1; }
+        LANG="$2"
         shift 2
         ;;
       --dry-run)
@@ -161,6 +170,13 @@ $PROMPT"
 
 Files to review:
 $FILE_LIST"
+  fi
+
+  # Language instruction: tell Codex to respond in the specified language
+  if [[ -n "$LANG" ]]; then
+    PROMPT="$PROMPT
+
+IMPORTANT: Write your entire response in $LANG. All descriptions, explanations, and suggestions must be in $LANG. Keep technical identifiers (file paths, function names, variable names) in their original form, but all prose content must be in $LANG."
   fi
 }
 

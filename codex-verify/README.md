@@ -7,6 +7,7 @@ Use OpenAI Codex CLI (GPT-5.5 or other configured model) to independently verify
 - **Two-phase verification**: Defect detection (bugs, security, logic errors) + Quality assessment (architecture, readability, maintainability, performance, testability)
 - **Multiple verification scopes**: diff (uncommitted changes), branch (compare against base), file (target specific files)
 - **Custom modifier**: `--custom` adds user-specified verification criteria on top of any scope
+- **Language support**: `--lang` tells Codex to respond in the user's language (e.g., `--lang zh-CN`, `--lang ja`)
 - **Safe command construction**: Bash arrays instead of eval — no injection risk
 - **Automatic JSONL fallback**: If output capture fails, automatically retries with JSONL parsing
 - **Dry-run mode**: Preview the exact command and prompt without executing
@@ -40,6 +41,12 @@ Prerequisite: Codex CLI must be installed and configured (`npm install -g @opena
 ### Custom verification criteria
 ```bash
 /codex-verify file both src/auth.ts --custom "focus on memory leaks and XSS"
+```
+
+### Output in a specific language
+```bash
+/codex-verify file both src/auth.ts --lang zh-CN
+/codex-verify diff defects --lang ja
 ```
 
 ### Quick check (defects only, skip quality assessment)
